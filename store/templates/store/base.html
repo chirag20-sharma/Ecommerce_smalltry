@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy</title>
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+<nav class="navbar">
+    <a href="{% url 'product_list' %}" class="brand">🛍️ ShopEasy</a>
+    <div class="nav-links">
+        <a href="{% url 'product_list' %}">Products</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'cart' %}">🛒 Cart
+                {% with total=user.cart.items.count %}
+                    {% if total %}<span class="badge">{{ total }}</span>{% endif %}
+                {% endwith %}
+            </a>
+            <a href="{% url 'orders' %}">My Orders</a>
+            <span class="username">Hi, {{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

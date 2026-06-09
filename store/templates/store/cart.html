@@ -1,0 +1,50 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<h1 class="page-title">Shopping Cart</h1>
+{% if cart.items.all %}
+<div class="cart-container">
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in cart.items.all %}
+            <tr>
+                <td>
+                    {% if item.product.get_image %}
+                        <img src="{{ item.product.get_image }}" width="50" style="border-radius:6px;"> 
+                    {% endif %}
+                    {{ item.product.name }}
+                </td>
+                <td>₹{{ item.product.price }}</td>
+                <td>
+                    <form method="post" action="{% url 'update_cart' item.id %}" style="display:inline-flex;gap:6px;">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="qty-input">
+                        <button type="submit" class="btn btn-outline btn-sm">Update</button>
+                    </form>
+                </td>
+                <td>₹{{ item.get_subtotal }}</td>
+                <td>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="cart-summary">
+        <h2>Total: ₹{{ cart.get_total }}</h2>
+        <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+        <a href="{% url 'product_list' %}" class="btn btn-outline">Continue Shopping</a>
+    </div>
+</div>
+{% else %}
+<p class="empty-msg">Your cart is empty. <a href="{% url 'product_list' %}">Browse products</a></p>
+{% endif %}
+{% endblock %}

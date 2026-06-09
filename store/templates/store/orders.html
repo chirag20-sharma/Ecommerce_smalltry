@@ -1,0 +1,43 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<h1 class="page-title">My Orders</h1>
+{% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+        <div class="order-header">
+            <span>Order #{{ order.id }}</span>
+            <span class="status status-{{ order.status }}">{{ order.get_status_display }}</span>
+            <span>{{ order.created_at|date:"d M Y, H:i" }}</span>
+            <span class="product-price">₹{{ order.total }}</span>
+            <span>{{ order.get_payment_method_display }}</span>
+        </div>
+
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+            <div style="flex:1;">
+                <table class="cart-table">
+                    <thead><tr><th>Product</th><th>Qty</th><th>Price</th></tr></thead>
+                    <tbody>
+                    {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₹{{ item.price }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="confirm-box" style="min-width:200px;flex-shrink:0;">
+                <h2>Delivery Address</h2>
+                <p>{{ order.full_name }}</p>
+                <p>{{ order.address }}</p>
+                <p>{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+                <p>📞 {{ order.phone }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<p class="empty-msg">No orders yet. <a href="{% url 'product_list' %}">Start shopping!</a></p>
+{% endif %}
+{% endblock %}

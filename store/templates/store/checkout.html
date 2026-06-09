@@ -1,0 +1,122 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<h1 class="page-title">Checkout</h1>
+<div class="checkout-layout">
+
+    <!-- DELIVERY FORM -->
+    <div class="checkout-form-box">
+        <form method="post" id="checkout-form">
+            {% csrf_token %}
+            <h2>📦 Delivery Address</h2>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" class="form-input" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" class="form-input" placeholder="10-digit mobile number" maxlength="15" required>
+            </div>
+            <div class="form-group">
+                <label>Address (House No, Street, Area)</label>
+                <textarea name="address" class="form-input" placeholder="Enter full address" rows="3" required></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" name="city" class="form-input" placeholder="City" required>
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <select name="state" class="form-input" required>
+                        <option value="">Select State</option>
+                        <option>Andhra Pradesh</option>
+                        <option>Arunachal Pradesh</option>
+                        <option>Assam</option>
+                        <option>Bihar</option>
+                        <option>Chhattisgarh</option>
+                        <option>Goa</option>
+                        <option>Gujarat</option>
+                        <option>Haryana</option>
+                        <option>Himachal Pradesh</option>
+                        <option>Jharkhand</option>
+                        <option>Karnataka</option>
+                        <option>Kerala</option>
+                        <option>Madhya Pradesh</option>
+                        <option>Maharashtra</option>
+                        <option>Manipur</option>
+                        <option>Meghalaya</option>
+                        <option>Mizoram</option>
+                        <option>Nagaland</option>
+                        <option>Odisha</option>
+                        <option>Punjab</option>
+                        <option>Rajasthan</option>
+                        <option>Sikkim</option>
+                        <option>Tamil Nadu</option>
+                        <option>Telangana</option>
+                        <option>Tripura</option>
+                        <option>Uttar Pradesh</option>
+                        <option>Uttarakhand</option>
+                        <option>West Bengal</option>
+                        <option>Delhi</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Pincode</label>
+                <input type="text" name="pincode" class="form-input" placeholder="6-digit pincode" maxlength="6" required>
+            </div>
+
+            <h2 style="margin-top:24px;">💳 Payment Method</h2>
+            <div class="payment-options">
+                <label class="payment-option">
+                    <input type="radio" name="payment_method" value="cod" checked>
+                    <div class="payment-card">
+                        <span class="payment-icon">🚚</span>
+                        <div>
+                            <strong>Cash on Delivery</strong>
+                            <p>Pay when your order arrives</p>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary full-width" style="margin-top:24px;padding:14px;">
+                🛒 Place Order
+            </button>
+        </form>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="order-summary-box">
+        <h2>Order Summary</h2>
+        <table class="cart-table">
+            <thead>
+                <tr><th>Product</th><th>Qty</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+            {% for item in cart.items.all %}
+                <tr>
+                    <td>{{ item.product.name|truncatewords:4 }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.get_subtotal }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="summary-total">
+            <span>Total Amount</span>
+            <span class="product-price">₹{{ cart.get_total }}</span>
+        </div>
+        <div class="summary-total">
+            <span>Delivery</span>
+            <span style="color:green;">FREE</span>
+        </div>
+        <div class="summary-total" style="font-size:1.2rem;font-weight:bold;">
+            <span>You Pay</span>
+            <span class="product-price">₹{{ cart.get_total }}</span>
+        </div>
+        <a href="{% url 'cart' %}" class="btn btn-outline-dark full-width" style="margin-top:12px;text-align:center;">← Back to Cart</a>
+    </div>
+
+</div>
+{% endblock %}

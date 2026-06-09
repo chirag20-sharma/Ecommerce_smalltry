@@ -1,0 +1,77 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<h1 class="page-title">Our Products</h1>
+
+<div class="shop-layout">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="filter-sidebar">
+        <form method="get">
+            <h3>Search</h3>
+            <input type="text" name="search" value="{{ search }}" placeholder="Search products..." class="form-input">
+
+            <h3>Category</h3>
+            <select name="category" class="form-input">
+                <option value="">All Categories</option>
+                {% for val, label in categories %}
+                    <option value="{{ val }}" {% if selected_category == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <h3>Price Range</h3>
+            <input type="number" name="min_price" value="{{ min_price }}" placeholder="Min ₹" class="form-input" min="0">
+            <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max ₹" class="form-input" min="0">
+
+            <h3>Sort By</h3>
+            <select name="sort" class="form-input">
+                <option value="">Default</option>
+                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A-Z</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary full-width" style="margin-top:12px;">Apply Filters</button>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-dark full-width" style="margin-top:8px;">Clear Filters</a>
+        </form>
+    </aside>
+
+    <!-- PRODUCT GRID -->
+    <div class="shop-main">
+        {% if products %}
+        <p class="result-count">{{ products.count }} product{{ products.count|pluralize }} found</p>
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                {% if product.get_image %}
+                    <img src="{{ product.get_image }}" alt="{{ product.name }}" class="product-img">
+                {% else %}
+                    <div class="product-img-placeholder">No Image</div>
+                {% endif %}
+                <div class="product-info">
+                    <span class="product-category">{{ product.get_category_display }}</span>
+                    <h2 class="product-name">{{ product.name }}</h2>
+                    <p class="product-desc">{{ product.description|truncatewords:15 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">₹{{ product.price }}</span>
+                        {% if product.stock > 0 %}
+                            <span class="stock in-stock">In Stock</span>
+                        {% else %}
+                            <span class="stock out-stock">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                    {% if product.stock > 0 %}
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary full-width">Add to Cart</a>
+                    {% else %}
+                        <button class="btn btn-disabled full-width" disabled>Out of Stock</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-msg">No products found. <a href="{% url 'product_list' %}">Clear filters</a></p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
